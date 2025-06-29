@@ -30,7 +30,7 @@ export const Header: React.FC = () => {
             </div>
             <div>
               <h1 className="text-lg font-bold">
-                {projectName || 'Multiagent Platform'}
+                {projectName || 'ibiA Multiagent Platform'}
               </h1>
               <p className={`text-sm ${
                 isDarkMode ? 'text-gray-400' : 'text-gray-600'
