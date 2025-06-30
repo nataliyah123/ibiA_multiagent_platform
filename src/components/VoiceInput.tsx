@@ -7,6 +7,7 @@ export const VoiceInput: React.FC = () => {
   const { isDarkMode, isListening, setIsListening, voiceTranscript, setVoiceTranscript } = useAppStore();
   const [isSupported, setIsSupported] = useState(false);
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [finalTranscript, setFinalTranscript] = useState('');
 
   useEffect(() => {
     // Check if speech recognition is supported
@@ -21,11 +22,28 @@ export const VoiceInput: React.FC = () => {
       recognitionInstance.lang = 'en-US';
       
       recognitionInstance.onresult = (event) => {
-        let transcript = '';
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
+        let interimTranscript = '';
+        let finalTranscriptPart = '';
+        
+        // Process all results from the beginning to capture the complete transcript
+        for (let i = 0; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          
+          if (event.results[i].isFinal) {
+            finalTranscriptPart += transcript + ' ';
+          } else {
+            interimTranscript += transcript;
+          }
         }
-        setVoiceTranscript(transcript);
+        
+        // Update final transcript if we have new final results
+        if (finalTranscriptPart) {
+          setFinalTranscript(prev => prev + finalTranscriptPart);
+        }
+        
+        // Combine final and interim transcripts for display
+        const fullTranscript = finalTranscript + finalTranscriptPart + interimTranscript;
+        setVoiceTranscript(fullTranscript.trim());
       };
       
       recognitionInstance.onend = () => {
@@ -37,9 +55,13 @@ export const VoiceInput: React.FC = () => {
         setIsListening(false);
       };
       
+      recognitionInstance.onstart = () => {
+        console.log('Speech recognition started');
+      };
+      
       setRecognition(recognitionInstance);
     }
-  }, [setIsListening, setVoiceTranscript]);
+  }, [setIsListening, setVoiceTranscript, finalTranscript]);
 
   const toggleListening = () => {
     if (!recognition) return;
@@ -48,14 +70,17 @@ export const VoiceInput: React.FC = () => {
       recognition.stop();
       setIsListening(false);
     } else {
+      // Reset transcripts when starting a new session
+      setFinalTranscript('');
+      setVoiceTranscript('');
       recognition.start();
       setIsListening(true);
-      setVoiceTranscript('');
     }
   };
 
   const clearTranscript = () => {
     setVoiceTranscript('');
+    setFinalTranscript('');
   };
 
   if (!isSupported) {
@@ -126,10 +151,15 @@ export const VoiceInput: React.FC = () => {
         <div className="text-center mb-6">
           <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             {isListening 
-              ? 'Listening... Click to stop' 
+              ? 'Listening... Click to stop recording' 
               : 'Click the microphone to start speaking'
             }
           </p>
+          {isListening && (
+            <p className={`text-xs mt-1 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+              Speak naturally - pauses are preserved in your transcript
+            </p>
+          )}
         </div>
 
         {/* Transcript Display */}
@@ -145,20 +175,34 @@ export const VoiceInput: React.FC = () => {
           >
             <div className="flex items-start justify-between mb-2">
               <h3 className="text-sm font-semibold">Transcript</h3>
-              <button
-                onClick={clearTranscript}
-                className={`text-xs px-2 py-1 rounded transition-colors ${
-                  isDarkMode 
-                    ? 'hover:bg-gray-600 text-gray-400 hover:text-white' 
-                    : 'hover:bg-gray-200 text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Clear
-              </button>
+              <div className="flex items-center space-x-2">
+                <span className={`text-xs px-2 py-1 rounded-full ${
+                  isListening 
+                    ? 'bg-red-100 text-red-800' 
+                    : 'bg-green-100 text-green-800'
+                }`}>
+                  {isListening ? 'Recording' : 'Stopped'}
+                </span>
+                <button
+                  onClick={clearTranscript}
+                  className={`text-xs px-2 py-1 rounded transition-colors ${
+                    isDarkMode 
+                      ? 'hover:bg-gray-600 text-gray-400 hover:text-white' 
+                      : 'hover:bg-gray-200 text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Clear
+                </button>
+              </div>
             </div>
-            <p className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-              {voiceTranscript}
-            </p>
+            <div className={`text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} max-h-40 overflow-y-auto`}>
+              <p className="whitespace-pre-wrap leading-relaxed">
+                {voiceTranscript}
+              </p>
+            </div>
+            <div className={`text-xs mt-2 ${isDarkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+              Words: {voiceTranscript.split(' ').filter(word => word.length > 0).length}
+            </div>
           </motion.div>
         )}
 
@@ -201,6 +245,7 @@ export const VoiceInput: React.FC = () => {
             <li>• Specify the number and roles of agents needed</li>
             <li>• Explain the workflow and interactions between agents</li>
             <li>• Mention any specific capabilities or integrations required</li>
+            <li>• Speak naturally - pauses and corrections are preserved</li>
           </ul>
         </div>
       </div>
