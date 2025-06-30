@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/your-site-id/deploy-status)](https://app.netlify.com/sites/your-site/deploys)
 
-> A production-ready platform for automating multiagent system development with intelligent code generation, RAG-powered insights, and seamless deployment capabilities. Powered by Google Gemini AI.
+> A production-ready platform for automating multiagent system development with intelligent code generation, RAG-powered insights, and seamless deployment capabilities. Powered by Google Gemini AI and ElevenLabs voice technology.
 
 ## Table of Contents
 
@@ -13,6 +13,8 @@
 - [Getting Started](#getting-started)
 - [Development Environment Setup](#development-environment-setup)
 - [Production Deployment](#production-deployment)
+- [ElevenLabs Voice Integration](#elevenlabs-voice-integration)
+- [Google Gemini AI Integration](#google-gemini-ai-integration)
 - [UX Pilot Integration](#ux-pilot-integration)
 - [Future Roadmap](#future-roadmap)
 - [Troubleshooting](#troubleshooting)
@@ -27,6 +29,7 @@ The Multiagent System Development Platform is a comprehensive solution for creat
 
 - **Multi-Framework Support**: CrewAI, Google ADK, and AutoGen with intelligent comparison matrix
 - **Google Gemini AI Integration**: Free-tier AI model for natural language processing and code generation
+- **ElevenLabs Voice Technology**: Advanced speech-to-text, transcript enhancement, and intent analysis
 - **RAG-Powered Intelligence**: GitHub repository scraping with vector storage for up-to-date code insights
 - **Dual Input Modes**: Voice-powered specifications and structured form inputs
 - **Visual Workflow Builder**: Drag-and-drop interface with Mermaid diagram export
@@ -50,8 +53,8 @@ The Multiagent System Development Platform is a comprehensive solution for creat
          │                       │                       │
          ▼                       ▼                       ▼
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Supabase      │    │   ChromaDB      │    │   Gemini AI     │
-│   (Database)    │    │   (Vectors)     │    │   (Free API)    │
+│   Supabase      │    │   ChromaDB      │    │   ElevenLabs    │
+│   (Database)    │    │   (Vectors)     │    │   (Voice AI)    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
@@ -72,6 +75,7 @@ Before you begin, ensure you have the following installed:
 - **Netlify Account** (for frontend deployment)
 - **Google Account** (for free Gemini API access)
 - **Supabase Account** (for database storage)
+- **ElevenLabs Account** (optional, for enhanced voice features)
 
 ### Installation Instructions
 
@@ -100,6 +104,7 @@ Before you begin, ensure you have the following installed:
    VITE_GITHUB_TOKEN=your_github_token_here
    VITE_SUPABASE_URL=your_supabase_url_here
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   VITE_ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
    ```
 
 ## Development Environment Setup
@@ -112,14 +117,20 @@ Before you begin, ensure you have the following installed:
    - Create a new API key
    - Copy the key to your `.env` file
 
-2. **Start the development server**
+2. **Get your ElevenLabs API key (optional)**
+   - Visit [ElevenLabs API Settings](https://elevenlabs.io/app/settings/api-keys)
+   - Sign up for a free account
+   - Generate an API key
+   - Copy the key to your `.env` file
+
+3. **Start the development server**
    ```bash
    npm run dev
    # or
    yarn dev
    ```
 
-3. **Access the application**
+4. **Access the application**
    - Open your browser to `http://localhost:5173`
    - The application will automatically reload on file changes
 
@@ -139,6 +150,9 @@ VITE_GITHUB_TOKEN=ghp_your-github-token
 # Required - Supabase for database storage
 VITE_SUPABASE_URL=your-supabase-project-url
 VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+
+# Optional - ElevenLabs for enhanced voice features
+VITE_ELEVENLABS_API_KEY=your-elevenlabs-api-key
 
 # Optional - Analytics and monitoring
 VITE_ANALYTICS_ID=your-analytics-id
@@ -161,6 +175,19 @@ VITE_LOG_LEVEL=debug
 - **No Credit Card Required**: Completely free to get started
 - **Advanced AI**: Latest Google AI technology
 - **Multiple Models**: Text generation, embeddings, and more
+
+#### ElevenLabs API Setup
+
+1. Go to [ElevenLabs](https://elevenlabs.io) and create a free account
+2. Navigate to [API Settings](https://elevenlabs.io/app/settings/api-keys)
+3. Generate a new API key
+4. Copy the key to your `.env` file as `VITE_ELEVENLABS_API_KEY`
+
+**ElevenLabs Features:**
+- **Free Tier**: 10,000 characters per month
+- **High-Quality Voice**: Realistic text-to-speech
+- **Speech-to-Text**: Advanced transcription capabilities
+- **Voice Cloning**: Custom voice creation (paid tiers)
 
 #### GitHub Token Setup
 
@@ -242,6 +269,7 @@ npm run update-deps
    VITE_GITHUB_TOKEN=your_production_github_token
    VITE_SUPABASE_URL=your_production_supabase_url
    VITE_SUPABASE_ANON_KEY=your_production_supabase_key
+   VITE_ELEVENLABS_API_KEY=your_production_elevenlabs_key
    ```
 
 #### Manual Deployment
@@ -343,6 +371,89 @@ npm install gtag
 
 # Configure in src/services/analytics.ts
 ```
+
+## ElevenLabs Voice Integration
+
+### Features
+
+The platform integrates ElevenLabs for advanced voice processing capabilities:
+
+#### Speech-to-Text
+- **High Accuracy**: Superior transcription quality compared to browser APIs
+- **Real-time Processing**: Live audio streaming and transcription
+- **Multiple Languages**: Support for various languages and accents
+- **Noise Reduction**: Advanced audio processing for clear transcription
+
+#### Text-to-Speech
+- **Natural Voices**: Realistic human-like voice synthesis
+- **Voice Selection**: Multiple voice options and personalities
+- **Custom Voices**: Voice cloning capabilities (paid tiers)
+- **Emotional Range**: Expressive speech with varied tones
+
+#### Transcript Enhancement
+- **AI-Powered Cleanup**: Automatic grammar and punctuation correction
+- **Context Preservation**: Maintains original meaning and intent
+- **Readability Improvement**: Enhanced formatting and structure
+- **Technical Accuracy**: Preserves technical terms and specifications
+
+#### Intent Analysis
+- **Natural Language Understanding**: Extracts user intentions from speech
+- **Entity Recognition**: Identifies frameworks, agent roles, and configurations
+- **Confidence Scoring**: Provides reliability metrics for detected intents
+- **Auto-Application**: Automatically applies detected configurations
+
+### Usage Examples
+
+#### Basic Voice Input
+```typescript
+// The system automatically detects and processes voice input
+// Users simply click the microphone and speak naturally
+
+"I want to create a multiagent system using CrewAI with three agents: 
+a researcher, a writer, and a reviewer for content creation."
+```
+
+#### Enhanced Processing
+```typescript
+// Original transcript (from speech-to-text)
+"um so i need like a crew ai system with uh three agents you know"
+
+// Enhanced transcript (AI-processed)
+"I need a CrewAI system with three agents."
+
+// Intent analysis
+{
+  "intent": "create_agents",
+  "entities": [
+    {"type": "framework", "value": "crewai"},
+    {"type": "agent_count", "value": "3"}
+  ],
+  "confidence": 0.92
+}
+```
+
+### Configuration
+
+#### Voice Settings
+- **Provider Selection**: Choose between browser speech recognition and ElevenLabs
+- **Voice Selection**: Pick from available ElevenLabs voices
+- **Enhancement Options**: Enable/disable transcript enhancement and intent analysis
+- **Quality Settings**: Adjust processing parameters for optimal results
+
+#### API Limits
+- **Free Tier**: 10,000 characters per month for text-to-speech
+- **Speech-to-Text**: Generous limits for transcription
+- **Rate Limits**: Automatic handling with fallback to browser APIs
+- **Usage Monitoring**: Track API usage within the application
+
+### Fallback Behavior
+
+The system gracefully handles ElevenLabs unavailability:
+
+1. **No API Key**: Falls back to browser speech recognition
+2. **Rate Limits**: Switches to browser APIs temporarily
+3. **Network Issues**: Uses cached voices and local processing
+4. **Service Outage**: Maintains full functionality with reduced features
 
 ## Google Gemini AI Integration
 
@@ -522,7 +633,7 @@ We're committed to expanding platform support based on community needs and indus
 
 | Quarter | Features | Status |
 |---------|----------|--------|
-| Q1 2024 | Core platform, CrewAI, AutoGen, Google ADK, Gemini AI | ✅ Complete |
+| Q1 2024 | Core platform, CrewAI, AutoGen, Google ADK, Gemini AI, ElevenLabs | ✅ Complete |
 | Q2 2024 | LangChain, Haystack, UX Pilot integration | 🔄 In Progress |
 | Q3 2024 | Semantic Kernel, Gemini Pro Vision | 📋 Planned |
 | Q4 2024 | Custom frameworks, marketplace | 📋 Planned |
@@ -648,6 +759,13 @@ export default defineConfig({
 # Implement exponential backoff
 ```
 
+**Problem**: ElevenLabs API errors
+```bash
+# Solution: Verify API key and quota
+# Check ElevenLabs dashboard for usage
+# System automatically falls back to browser speech recognition
+```
+
 **Problem**: GitHub API rate limit exceeded
 ```bash
 # Solution: Use authenticated requests
@@ -669,6 +787,22 @@ export default defineConfig({
 # Solution: Check function logs in Netlify
 # Verify function syntax and exports
 # Test functions locally with netlify dev
+```
+
+#### Voice Input Issues
+
+**Problem**: ElevenLabs not working
+```bash
+# Solution: Check API key in .env file
+# Verify account has available credits
+# System falls back to browser speech recognition
+```
+
+**Problem**: Microphone not accessible
+```bash
+# Solution: Check browser permissions
+# Ensure HTTPS in production
+# Test with different browsers
 ```
 
 ### Getting Support
@@ -830,6 +964,7 @@ This project uses several open-source libraries. See [THIRD_PARTY_LICENSES.md](T
 
 - **Bolt.new** - For providing the development platform
 - **Google Gemini** - For free AI API access and advanced capabilities
+- **ElevenLabs** - For cutting-edge voice AI technology
 - **CrewAI Team** - For the innovative multiagent framework
 - **Microsoft AutoGen** - For conversational AI capabilities
 - **Google** - For the Agent Development Kit
@@ -840,6 +975,6 @@ This project uses several open-source libraries. See [THIRD_PARTY_LICENSES.md](T
 
 **Built with ❤️ by the Multiagent Platform Team**
 
-*Powered by Google Gemini AI - Free, Fast, and Intelligent*
+*Powered by Google Gemini AI and ElevenLabs Voice Technology*
 
 For more information, visit our [website](https://multiagent-platform.com) or follow us on [Twitter](https://twitter.com/multiagent_platform).
