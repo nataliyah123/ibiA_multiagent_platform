@@ -22,7 +22,7 @@ import { DataManagement } from './DataManagement';
 import { codeGenerator } from '../services/codeGenerator';
 import { packageService } from '../services/packageService';
 
-type Step = 'framework' | 'input-mode' | 'agents' | 'workflow' | 'generate' | 'data';
+type Step = 'framework' | 'input-mode' | 'agents' | 'generate' | 'data';
 
 export const Dashboard: React.FC = () => {
   const { 
@@ -55,9 +55,8 @@ export const Dashboard: React.FC = () => {
 
   const steps = [
     { id: 'framework', title: 'Framework', icon: Zap, completed: !!selectedFramework },
-    { id: 'input-mode', title: 'Input Mode', icon: inputMode === 'voice' ? Mic : FileText, completed: !!inputMode },
+    { id: 'input-mode', title: 'Input & Workflow', icon: inputMode === 'voice' ? Mic : FileText, completed: !!inputMode },
     { id: 'agents', title: 'Agents', icon: Bot, completed: agents.length > 0 },
-    { id: 'workflow', title: 'Workflow', icon: Workflow, completed: workflowSteps.length > 0 },
     { id: 'data', title: 'Data', icon: Database, completed: true },
     { id: 'generate', title: 'Generate', icon: Download, completed: !!generatedProject },
   ];
@@ -276,7 +275,51 @@ export const Dashboard: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-8"
               >
-                {inputMode === 'voice' ? <VoiceInput /> : null}
+                {inputMode === 'voice' ? (
+                  <VoiceInput />
+                ) : (
+                  <div className="space-y-6">
+                    {/* Workflow Design for Form Input */}
+                    <div className={`rounded-xl p-6 border ${
+                      isDarkMode 
+                        ? 'bg-gray-800/50 border-gray-700' 
+                        : 'bg-white border-gray-200'
+                    }`}>
+                      <div className="text-center">
+                        <Workflow className={`w-16 h-16 mx-auto mb-4 ${
+                          isDarkMode ? 'text-gray-600' : 'text-gray-400'
+                        }`} />
+                        <h3 className="text-lg font-semibold mb-2">Workflow Builder</h3>
+                        <p className={`mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          Visual workflow designer with drag-and-drop interface and Mermaid diagram export
+                        </p>
+                        <div className="flex items-center justify-center space-x-4 text-sm">
+                          <span className="flex items-center space-x-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            <span>Drag & Drop Interface</span>
+                          </span>
+                          <span className="flex items-center space-x-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            <span>Mermaid Export</span>
+                          </span>
+                          <span className="flex items-center space-x-2">
+                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            <span>Real-time Validation</span>
+                          </span>
+                        </div>
+                        
+                        <div className={`mt-6 p-4 rounded-lg ${
+                          isDarkMode ? 'bg-indigo-900/20 border border-indigo-700' : 'bg-indigo-50 border border-indigo-200'
+                        }`}>
+                          <h4 className="text-sm font-semibold mb-2 text-indigo-600">Coming in v2.0</h4>
+                          <p className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                            Advanced workflow builder with visual node editor, conditional logic, and automated testing capabilities.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             )}
           </div>
@@ -284,48 +327,6 @@ export const Dashboard: React.FC = () => {
         
       case 'agents':
         return <AgentBuilder />;
-        
-      case 'workflow':
-        return (
-          <div className="space-y-6">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2">Workflow Design</h2>
-              <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                Define how your agents interact and collaborate
-              </p>
-            </div>
-            
-            <div className={`rounded-xl p-8 border ${
-              isDarkMode 
-                ? 'bg-gray-800/50 border-gray-700' 
-                : 'bg-white border-gray-200'
-            }`}>
-              <div className="text-center">
-                <Workflow className={`w-16 h-16 mx-auto mb-4 ${
-                  isDarkMode ? 'text-gray-600' : 'text-gray-400'
-                }`} />
-                <h3 className="text-lg font-semibold mb-2">Workflow Builder Coming Soon</h3>
-                <p className={`mb-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                  Visual workflow designer with drag-and-drop interface and Mermaid diagram export
-                </p>
-                <div className="flex items-center justify-center space-x-4 text-sm">
-                  <span className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span>Drag & Drop Interface</span>
-                  </span>
-                  <span className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span>Mermaid Export</span>
-                  </span>
-                  <span className="flex items-center space-x-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span>Real-time Validation</span>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
 
       case 'data':
         return <DataManagement />;
