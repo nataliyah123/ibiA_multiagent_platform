@@ -1,8 +1,3 @@
-const { Handler } = require('@netlify/functions');
-
-// Note: In production, you would use actual ChromaDB client
-// This is a simplified implementation for demonstration
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
@@ -21,7 +16,11 @@ const handler = async (event, context) => {
       return { statusCode: 200, headers: corsHeaders, body: '' };
     }
     
-    const endpoint = path.split('/').pop();
+    // Extract endpoint from path
+    const pathParts = path.split('/');
+    const endpoint = pathParts[pathParts.length - 1];
+    
+    console.log(`Vector store endpoint: ${endpoint}, method: ${httpMethod}`);
     
     switch (endpoint) {
       case 'store':
@@ -36,7 +35,7 @@ const handler = async (event, context) => {
         return {
           statusCode: 404,
           headers: corsHeaders,
-          body: JSON.stringify({ error: 'Endpoint not found' }),
+          body: JSON.stringify({ error: 'Endpoint not found', path, endpoint }),
         };
     }
     
@@ -63,32 +62,43 @@ async function handleStore(httpMethod, body) {
     };
   }
   
-  const { embeddings } = JSON.parse(body || '{}');
-  
-  if (!embeddings || !Array.isArray(embeddings)) {
+  try {
+    const { embeddings } = JSON.parse(body || '{}');
+    
+    if (!embeddings || !Array.isArray(embeddings)) {
+      return {
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify({ error: 'Invalid embeddings data' }),
+      };
+    }
+    
+    // Store embeddings (in production, use ChromaDB)
+    for (const embedding of embeddings) {
+      vectorStore.set(embedding.id, {
+        ...embedding,
+        stored_at: new Date().toISOString(),
+      });
+    }
+    
+    console.log(`Stored ${embeddings.length} embeddings`);
+    
+    return {
+      statusCode: 200,
+      headers: corsHeaders,
+      body: JSON.stringify({ 
+        message: `Stored ${embeddings.length} embeddings`,
+        count: embeddings.length 
+      }),
+    };
+  } catch (error) {
+    console.error('Store error:', error);
     return {
       statusCode: 400,
       headers: corsHeaders,
-      body: JSON.stringify({ error: 'Invalid embeddings data' }),
+      body: JSON.stringify({ error: 'Invalid JSON in request body' }),
     };
   }
-  
-  // Store embeddings (in production, use ChromaDB)
-  for (const embedding of embeddings) {
-    vectorStore.set(embedding.id, {
-      ...embedding,
-      stored_at: new Date().toISOString(),
-    });
-  }
-  
-  return {
-    statusCode: 200,
-    headers: corsHeaders,
-    body: JSON.stringify({ 
-      message: `Stored ${embeddings.length} embeddings`,
-      count: embeddings.length 
-    }),
-  };
 }
 
 async function handleSearch(httpMethod, queryStringParameters) {
@@ -110,38 +120,49 @@ async function handleSearch(httpMethod, queryStringParameters) {
     };
   }
   
-  // Generate embedding for query (simplified)
-  const queryEmbedding = await generateSimpleEmbedding(query);
-  
-  // Search similar embeddings (simplified cosine similarity)
-  const results = [];
-  const maxResults = parseInt(limit);
-  
-  for (const [id, stored] of vectorStore.entries()) {
-    if (framework && stored.framework !== framework) continue;
+  try {
+    // Generate embedding for query (simplified)
+    const queryEmbedding = await generateSimpleEmbedding(query);
     
-    const similarity = calculateCosineSimilarity(queryEmbedding, stored.embedding);
+    // Search similar embeddings (simplified cosine similarity)
+    const results = [];
+    const maxResults = parseInt(limit);
     
-    results.push({
-      id,
-      score: similarity,
-      metadata: stored.metadata,
-    });
+    for (const [id, stored] of vectorStore.entries()) {
+      if (framework && stored.framework !== framework) continue;
+      
+      const similarity = calculateCosineSimilarity(queryEmbedding, stored.embedding);
+      
+      results.push({
+        id,
+        score: similarity,
+        metadata: stored.metadata,
+      });
+    }
+    
+    // Sort by similarity and limit results
+    results.sort((a, b) => b.score - a.score);
+    const matches = results.slice(0, maxResults);
+    
+    console.log(`Search for "${query}" returned ${matches.length} results`);
+    
+    return {
+      statusCode: 200,
+      headers: corsHeaders,
+      body: JSON.stringify({ 
+        matches,
+        total: results.length,
+        query,
+      }),
+    };
+  } catch (error) {
+    console.error('Search error:', error);
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({ error: 'Search failed', message: error.message }),
+    };
   }
-  
-  // Sort by similarity and limit results
-  results.sort((a, b) => b.score - a.score);
-  const matches = results.slice(0, maxResults);
-  
-  return {
-    statusCode: 200,
-    headers: corsHeaders,
-    body: JSON.stringify({ 
-      matches,
-      total: results.length,
-      query,
-    }),
-  };
 }
 
 async function handleEmbed(httpMethod, body) {
@@ -153,27 +174,38 @@ async function handleEmbed(httpMethod, body) {
     };
   }
   
-  const { text } = JSON.parse(body || '{}');
-  
-  if (!text) {
+  try {
+    const { text } = JSON.parse(body || '{}');
+    
+    if (!text) {
+      return {
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify({ error: 'Text parameter required' }),
+      };
+    }
+    
+    // Generate embedding (simplified - in production use OpenAI or similar)
+    const embedding = await generateSimpleEmbedding(text);
+    
+    console.log(`Generated embedding for text: "${text.substring(0, 50)}..."`);
+    
+    return {
+      statusCode: 200,
+      headers: corsHeaders,
+      body: JSON.stringify({ 
+        embedding,
+        dimensions: embedding.length,
+      }),
+    };
+  } catch (error) {
+    console.error('Embed error:', error);
     return {
       statusCode: 400,
       headers: corsHeaders,
-      body: JSON.stringify({ error: 'Text parameter required' }),
+      body: JSON.stringify({ error: 'Invalid JSON in request body' }),
     };
   }
-  
-  // Generate embedding (simplified - in production use OpenAI or similar)
-  const embedding = await generateSimpleEmbedding(text);
-  
-  return {
-    statusCode: 200,
-    headers: corsHeaders,
-    body: JSON.stringify({ 
-      embedding,
-      dimensions: embedding.length,
-    }),
-  };
 }
 
 async function handleHealth() {
@@ -184,6 +216,8 @@ async function handleHealth() {
       status: 'healthy',
       vectorCount: vectorStore.size,
       timestamp: new Date().toISOString(),
+      service: 'vector-store',
+      version: '1.0.0',
     }),
   };
 }
@@ -206,7 +240,7 @@ async function generateSimpleEmbedding(text) {
   
   // Normalize the vector
   const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
-  return embedding.map(val => val / magnitude);
+  return magnitude > 0 ? embedding.map(val => val / magnitude) : embedding;
 }
 
 function simpleHash(str) {
@@ -232,7 +266,8 @@ function calculateCosineSimilarity(vecA, vecB) {
     normB += vecB[i] * vecB[i];
   }
   
-  return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
+  const denominator = Math.sqrt(normA) * Math.sqrt(normB);
+  return denominator > 0 ? dotProduct / denominator : 0;
 }
 
 module.exports = { handler };
