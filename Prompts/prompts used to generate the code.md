@@ -69,7 +69,7 @@ Prioritize production-ready code with modern ES6+ features and comprehensive log
 
 ### Data Management  
 - **Server-Side Storage**:  
-  * Use free-tier PostgreSQL (e.g., Supabase) or MongoDB (e.g., Atlas) to store scraped data in framework-specific tables/collections.  
+  * Use free-tier PostgreSQL (e.g., Supabase)  to store scraped data in framework-specific tables/collections.  
   * Apply Brotli compression to raw scraped HTML before storage.  
 - **Client-Side Caching**:  
   * Implement IndexedDB with LRU cache (500MB max) for temporary storage of recent user queries.  
