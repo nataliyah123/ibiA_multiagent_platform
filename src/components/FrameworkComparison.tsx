@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, Star, TrendingUp, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Star, TrendingUp, Clock, RotateCcw } from 'lucide-react';
 import { useAppStore } from '../stores/useAppStore';
 
 interface Framework {
@@ -92,13 +92,34 @@ export const FrameworkComparison: React.FC = () => {
     setSelectedFramework(frameworkId);
   };
 
+  const handleClearSelection = () => {
+    setSelectedFramework('');
+  };
+
   return (
     <div className="space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Choose Your Framework</h2>
-        <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-          Compare and select the best framework for your multiagent system
-        </p>
+      <div className="flex items-center justify-between">
+        <div className="text-center flex-1">
+          <h2 className="text-2xl font-bold mb-2">Choose Your Framework</h2>
+          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+            Compare and select the best framework for your multiagent system
+          </p>
+        </div>
+        
+        {selectedFramework && (
+          <button
+            onClick={handleClearSelection}
+            className={`px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 ${
+              isDarkMode 
+                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="Clear selection"
+          >
+            <RotateCcw className="w-4 h-4" />
+            <span>Clear</span>
+          </button>
+        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -110,16 +131,22 @@ export const FrameworkComparison: React.FC = () => {
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className={`relative overflow-hidden rounded-xl border-2 transition-all duration-300 cursor-pointer ${
               selectedFramework === framework.id
-                ? `border-indigo-500 ${isDarkMode ? 'bg-indigo-900/20' : 'bg-indigo-50'}`
+                ? `border-indigo-500 ${isDarkMode ? 'bg-indigo-900/20' : 'bg-indigo-50'} ring-2 ring-indigo-500/20`
                 : `border-transparent ${isDarkMode ? 'bg-gray-800/50' : 'bg-white'} hover:border-gray-300`
             } ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-50'}`}
             onClick={() => handleFrameworkSelect(framework.id)}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
           >
             {/* Selection indicator */}
             {selectedFramework === framework.id && (
-              <div className="absolute top-4 right-4">
+              <motion.div 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute top-4 right-4 z-10"
+              >
                 <CheckCircle className="w-6 h-6 text-indigo-500" />
-              </div>
+              </motion.div>
             )}
 
             <div className="p-6">
@@ -221,9 +248,11 @@ export const FrameworkComparison: React.FC = () => {
                   <span>{framework.popularity}%</span>
                 </div>
                 <div className={`w-full h-2 rounded-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-200'}`}>
-                  <div
-                    className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 rounded-full transition-all duration-1000"
-                    style={{ width: `${framework.popularity}%` }}
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${framework.popularity}%` }}
+                    transition={{ duration: 1, delay: index * 0.2 }}
                   />
                 </div>
               </div>
@@ -241,13 +270,27 @@ export const FrameworkComparison: React.FC = () => {
             isDarkMode ? 'border-gray-700' : 'border-gray-200'
           }`}
         >
-          <div className="flex items-center space-x-3 mb-4">
-            <CheckCircle className="w-6 h-6 text-indigo-500" />
-            <h3 className="text-lg font-bold">
-              {frameworks.find(f => f.id === selectedFramework)?.name} Selected
-            </h3>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <CheckCircle className="w-6 h-6 text-indigo-500" />
+              <h3 className="text-lg font-bold">
+                {frameworks.find(f => f.id === selectedFramework)?.name} Selected
+              </h3>
+            </div>
+            
+            <button
+              onClick={handleClearSelection}
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                isDarkMode 
+                  ? 'hover:bg-gray-700 text-gray-400 hover:text-white' 
+                  : 'hover:bg-gray-100 text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Change Selection
+            </button>
           </div>
-          <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+          
+          <p className={`mt-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             You've selected {frameworks.find(f => f.id === selectedFramework)?.name} for your multiagent system. 
             This framework is ideal for {frameworks.find(f => f.id === selectedFramework)?.useCase.toLowerCase()}.
           </p>

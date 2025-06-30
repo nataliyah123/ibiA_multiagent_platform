@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Zap, 
@@ -33,12 +33,18 @@ export const Dashboard: React.FC = () => {
     agents, 
     workflowSteps,
     projectName,
-    setProjectName
+    setProjectName,
+    resetSessionState
   } = useAppStore();
   
   const [currentStep, setCurrentStep] = useState<Step>('framework');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedProject, setGeneratedProject] = useState<any>(null);
+
+  // Reset session state on component mount to ensure fresh start
+  useEffect(() => {
+    resetSessionState();
+  }, [resetSessionState]);
 
   const steps = [
     { id: 'framework', title: 'Framework', icon: Zap, completed: !!selectedFramework },
@@ -123,6 +129,18 @@ export const Dashboard: React.FC = () => {
                 : 'bg-white border-gray-300'
             } focus:ring-2 focus:ring-indigo-500 focus:border-transparent`}
           />
+          
+          <button
+            onClick={resetSessionState}
+            className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+              isDarkMode 
+                ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+            title="Reset all selections"
+          >
+            Reset
+          </button>
         </div>
       </div>
       
@@ -207,7 +225,7 @@ export const Dashboard: React.FC = () => {
                 </p>
                 <div className="mt-4 flex items-center space-x-2">
                   <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                    ElevenLabs
+                    Browser Speech
                   </span>
                   <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
                     Natural Language

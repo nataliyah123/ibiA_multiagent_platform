@@ -38,7 +38,7 @@ interface AppState {
   projectName: string;
   setProjectName: (name: string) => void;
   
-  // Framework
+  // Framework - NOT PERSISTED (will reset on refresh)
   selectedFramework: string;
   setSelectedFramework: (framework: string) => void;
   
@@ -52,11 +52,11 @@ interface AppState {
   workflowSteps: WorkflowStep[];
   setWorkflowSteps: (steps: WorkflowStep[]) => void;
   
-  // Input mode
+  // Input mode - NOT PERSISTED (will reset on refresh)
   inputMode: 'voice' | 'form';
   setInputMode: (mode: 'voice' | 'form') => void;
   
-  // Voice
+  // Voice - NOT PERSISTED (will reset on refresh)
   isListening: boolean;
   setIsListening: (listening: boolean) => void;
   voiceTranscript: string;
@@ -69,6 +69,9 @@ interface AppState {
   // API Keys
   apiKeys: Record<string, string>;
   setApiKey: (service: string, key: string) => void;
+  
+  // Reset functions for non-persisted state
+  resetSessionState: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -82,7 +85,7 @@ export const useAppStore = create<AppState>()(
       projectName: '',
       setProjectName: (name: string) => set({ projectName: name }),
       
-      // Framework
+      // Framework - starts empty on each session
       selectedFramework: '',
       setSelectedFramework: (framework: string) => set({ selectedFramework: framework }),
       
@@ -102,11 +105,11 @@ export const useAppStore = create<AppState>()(
       workflowSteps: [],
       setWorkflowSteps: (steps: WorkflowStep[]) => set({ workflowSteps: steps }),
       
-      // Input mode
+      // Input mode - starts with form on each session
       inputMode: 'form',
       setInputMode: (mode: 'voice' | 'form') => set({ inputMode: mode }),
       
-      // Voice
+      // Voice - starts inactive on each session
       isListening: false,
       setIsListening: (listening: boolean) => set({ isListening: listening }),
       voiceTranscript: '',
@@ -120,13 +123,21 @@ export const useAppStore = create<AppState>()(
       apiKeys: {},
       setApiKey: (service: string, key: string) => 
         set({ apiKeys: { ...get().apiKeys, [service]: key } }),
+      
+      // Reset session state
+      resetSessionState: () => set({
+        selectedFramework: '',
+        inputMode: 'form',
+        isListening: false,
+        voiceTranscript: '',
+      }),
     }),
     {
       name: 'multiagent-app-storage',
       partialize: (state) => ({
+        // Only persist these values - framework selection and voice state will reset
         isDarkMode: state.isDarkMode,
         projectName: state.projectName,
-        selectedFramework: state.selectedFramework,
         agents: state.agents,
         workflowSteps: state.workflowSteps,
         ragDataLastUpdated: state.ragDataLastUpdated,
