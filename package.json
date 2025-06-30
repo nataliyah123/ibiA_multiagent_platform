@@ -28,8 +28,7 @@
     "mermaid": "^10.6.1",
     "monaco-editor": "^0.45.0",
     "@monaco-editor/react": "^4.6.0",
-    "@supabase/supabase-js": "^2.39.0",
-    
+    "@supabase/supabase-js": "^2.39.0"    
   },
   "devDependencies": {
     
