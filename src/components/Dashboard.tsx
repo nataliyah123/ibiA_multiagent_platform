@@ -40,11 +40,18 @@ export const Dashboard: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<Step>('framework');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedProject, setGeneratedProject] = useState<any>(null);
+  const [hasElevenLabs, setHasElevenLabs] = useState(false);
 
   // Reset session state on component mount to ensure fresh start
   useEffect(() => {
     resetSessionState();
   }, [resetSessionState]);
+
+  // Check for ElevenLabs API key
+  useEffect(() => {
+    const elevenLabsKey = import.meta.env.VITE_ELEVENLABS_API_KEY;
+    setHasElevenLabs(!!elevenLabsKey);
+  }, []);
 
   const steps = [
     { id: 'framework', title: 'Framework', icon: Zap, completed: !!selectedFramework },
@@ -224,8 +231,12 @@ export const Dashboard: React.FC = () => {
                   Describe your system using natural language with AI-powered voice processing
                 </p>
                 <div className="mt-4 flex items-center space-x-2">
-                  <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                    Browser Speech
+                  <span className={`px-2 py-1 text-xs rounded-full ${
+                    hasElevenLabs 
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {hasElevenLabs ? 'ElevenLabs' : 'Browser Speech'}
                   </span>
                   <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">
                     Natural Language
