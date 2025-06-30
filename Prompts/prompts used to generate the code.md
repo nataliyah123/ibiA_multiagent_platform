@@ -65,3 +65,14 @@ Generate complete project with:
 
 Prioritize production-ready code with modern ES6+ features and comprehensive logging."
 
+# Prompt 2:-
+
+### Data Management  
+- **Server-Side Storage**:  
+  * Use free-tier PostgreSQL (e.g., Supabase) or MongoDB (e.g., Atlas) to store scraped data in framework-specific tables/collections.  
+  * Apply Brotli compression to raw scraped HTML before storage.  
+- **Client-Side Caching**:  
+  * Implement IndexedDB with LRU cache (500MB max) for temporary storage of recent user queries.  
+- **Vector Database**:  
+  * Host ChromaDB/FAISS on the backend server to serve embeddings from the centralized database.  
+
