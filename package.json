@@ -27,7 +27,8 @@
     "fflate": "^0.8.1",
     "mermaid": "^10.6.1",
     "monaco-editor": "^0.45.0",
-    "@monaco-editor/react": "^4.6.0"
+    "@monaco-editor/react": "^4.6.0",
+    "@supabase/supabase-js": "^2.39.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
@@ -47,4 +48,3 @@
     "vite": "^5.4.2"
   }
 }
-  

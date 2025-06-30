@@ -11,16 +11,18 @@ import {
   CheckCircle,
   AlertCircle,
   Mic,
-  FileText
+  FileText,
+  Database
 } from 'lucide-react';
 import { useAppStore } from '../stores/useAppStore';
 import { FrameworkComparison } from './FrameworkComparison';
 import { AgentBuilder } from './AgentBuilder';
 import { VoiceInput } from './VoiceInput';
+import { DataManagement } from './DataManagement';
 import { codeGenerator } from '../services/codeGenerator';
 import { packageService } from '../services/packageService';
 
-type Step = 'framework' | 'input-mode' | 'agents' | 'workflow' | 'generate';
+type Step = 'framework' | 'input-mode' | 'agents' | 'workflow' | 'generate' | 'data';
 
 export const Dashboard: React.FC = () => {
   const { 
@@ -43,6 +45,7 @@ export const Dashboard: React.FC = () => {
     { id: 'input-mode', title: 'Input Mode', icon: inputMode === 'voice' ? Mic : FileText, completed: !!inputMode },
     { id: 'agents', title: 'Agents', icon: Bot, completed: agents.length > 0 },
     { id: 'workflow', title: 'Workflow', icon: Workflow, completed: workflowSteps.length > 0 },
+    { id: 'data', title: 'Data', icon: Database, completed: true },
     { id: 'generate', title: 'Generate', icon: Download, completed: !!generatedProject },
   ];
 
@@ -104,7 +107,7 @@ export const Dashboard: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold mb-2">Multiagent System Builder</h1>
           <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            Create production-ready AI agent systems with automated workflows
+            Create production-ready AI agent systems with automated workflows and RAG-powered insights
           </p>
         </div>
         
@@ -294,6 +297,9 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
         );
+
+      case 'data':
+        return <DataManagement />;
         
       case 'generate':
         return (
@@ -342,11 +348,11 @@ export const Dashboard: React.FC = () => {
                   isDarkMode ? 'bg-gray-700/50' : 'bg-gray-50'
                 }`}>
                   <div className="flex items-center space-x-2 mb-2">
-                    <Workflow className="w-5 h-5 text-amber-600" />
-                    <span className="font-semibold">Workflow</span>
+                    <Database className="w-5 h-5 text-purple-600" />
+                    <span className="font-semibold">Data</span>
                   </div>
                   <p className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {workflowSteps.length} steps
+                    RAG-enabled
                   </p>
                 </div>
               </div>
@@ -435,11 +441,15 @@ export const Dashboard: React.FC = () => {
                   </span>
                   <span className="flex items-center space-x-2 text-green-600">
                     <CheckCircle className="w-4 h-4" />
-                    <span>Netlify Ready</span>
+                    <span>Supabase Ready</span>
                   </span>
                   <span className="flex items-center space-x-2 text-green-600">
                     <CheckCircle className="w-4 h-4" />
-                    <span>Docker Included</span>
+                    <span>Vector DB Enabled</span>
+                  </span>
+                  <span className="flex items-center space-x-2 text-green-600">
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Netlify Ready</span>
                   </span>
                 </div>
               </motion.div>

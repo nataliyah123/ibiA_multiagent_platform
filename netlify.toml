@@ -22,6 +22,27 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
+# Vector database endpoints
+[[redirects]]
+  from = "/api/vectors/store"
+  to = "/.netlify/functions/vector-store"
+  status = 200
+
+[[redirects]]
+  from = "/api/vectors/search"
+  to = "/.netlify/functions/vector-store"
+  status = 200
+
+[[redirects]]
+  from = "/api/vectors/embed"
+  to = "/.netlify/functions/vector-store"
+  status = 200
+
+[[redirects]]
+  from = "/api/vectors/health"
+  to = "/.netlify/functions/vector-store"
+  status = 200
+
 [dev]
   command = "npm run dev"
   port = 3000
@@ -35,3 +56,7 @@
 [[edge_functions]]
   function = "data-scraper"
   path = "/api/scrape/*"
+
+[[edge_functions]]
+  function = "vector-store"
+  path = "/api/vectors/*"
