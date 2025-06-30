@@ -205,19 +205,19 @@ export const VoiceInput: React.FC = () => {
         </div>
       </div>
 
-      {/* ElevenLabs Integration Note */}
+      {/* Gemini Integration Note */}
       <div className={`rounded-lg p-4 border ${
         isDarkMode 
-          ? 'bg-amber-900/20 border-amber-700' 
-          : 'bg-amber-50 border-amber-200'
+          ? 'bg-emerald-900/20 border-emerald-700' 
+          : 'bg-emerald-50 border-emerald-200'
       }`}>
         <div className="flex items-center space-x-2">
-          <Volume2 className="w-5 h-5 text-amber-600" />
-          <span className="text-sm font-semibold text-amber-600">ElevenLabs Integration</span>
+          <Volume2 className="w-5 h-5 text-emerald-600" />
+          <span className="text-sm font-semibold text-emerald-600">Google Gemini Integration</span>
         </div>
-        <p className={`text-xs mt-1 ${isDarkMode ? 'text-amber-400' : 'text-amber-700'}`}>
-          Enhanced voice processing with ElevenLabs AI is available in the full platform. 
-          Current implementation uses browser speech recognition.
+        <p className={`text-xs mt-1 ${isDarkMode ? 'text-emerald-400' : 'text-emerald-700'}`}>
+          Enhanced voice processing with Google Gemini AI is available in the full platform. 
+          Current implementation uses browser speech recognition with Gemini-powered analysis.
         </p>
       </div>
     </div>

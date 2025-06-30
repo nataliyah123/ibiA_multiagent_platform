@@ -262,23 +262,57 @@ class DatabaseService {
 
   async generateEmbedding(text: string): Promise<number[]> {
     try {
-      const response = await fetch(`${this.VECTOR_API_BASE}/embed`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text }),
-      });
+      // Use Gemini API for embeddings
+      const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (!geminiApiKey) {
+        throw new Error('Gemini API key not found');
+      }
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent?key=${geminiApiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'models/embedding-001',
+            content: {
+              parts: [{ text }]
+            }
+          }),
+        }
+      );
 
       if (!response.ok) {
-        throw new Error(`Embedding generation failed: ${response.statusText}`);
+        throw new Error(`Gemini embedding failed: ${response.statusText}`);
       }
 
       const result = await response.json();
-      return result.embedding;
+      return result.embedding.values;
     } catch (error) {
-      console.error('Failed to generate embedding:', error);
-      throw error;
+      console.error('Failed to generate embedding with Gemini:', error);
+      
+      // Fallback to local vector API
+      try {
+        const response = await fetch(`${this.VECTOR_API_BASE}/embed`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Local embedding generation failed: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        return result.embedding;
+      } catch (fallbackError) {
+        console.error('Fallback embedding generation also failed:', fallbackError);
+        throw fallbackError;
+      }
     }
   }
 

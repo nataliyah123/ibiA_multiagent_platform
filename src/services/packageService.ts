@@ -254,7 +254,7 @@ module.exports = { handler };
 
 ## Overview
 
-This document provides comprehensive deployment instructions for your ${framework}-based multi-agent system.
+This document provides comprehensive deployment instructions for your ${framework}-based multi-agent system powered by Google Gemini AI.
 
 ## Deployment Options
 
@@ -300,11 +300,23 @@ This document provides comprehensive deployment instructions for your ${framewor
 Ensure these environment variables are set in your deployment:
 
 ### Required
-- \`OPENAI_API_KEY\`: Your OpenAI API key
+- \`GEMINI_API_KEY\`: Your Google Gemini API key (get from [Google AI Studio](https://makersuite.google.com/app/apikey))
 - \`LOG_LEVEL\`: Logging level (INFO, DEBUG, ERROR)
 
 ### Framework-Specific (${framework.toUpperCase()})
 ${this.getFrameworkEnvVars(framework)}
+
+## Google Gemini API Setup
+
+1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Sign in with your Google account
+3. Create a new API key
+4. Copy the API key to your environment variables as \`GEMINI_API_KEY\`
+
+### Gemini API Features:
+- **Free Tier**: 60 requests per minute, 1,500 requests per day
+- **Rate Limits**: Generous limits for development and testing
+- **Models Available**: Gemini Pro, Gemini Pro Vision, Embedding models
 
 ## Database Setup
 
@@ -368,6 +380,7 @@ Enable debug logging by setting \`LOG_LEVEL=DEBUG\` in environment variables.
 
 *Generated on ${new Date().toISOString()}*
 *Framework: ${framework}*
+*AI Model: Google Gemini*
 *Platform: Multiagent Development Platform*
 `;
   }
@@ -376,7 +389,7 @@ Enable debug logging by setting \`LOG_LEVEL=DEBUG\` in environment variables.
     const envVars = {
       'crewai': `- \`CREWAI_API_KEY\`: CrewAI API key
 - \`SERPER_API_KEY\`: Serper API key for web search`,
-      'autogen': `- \`AUTOGEN_MODEL\`: Model to use (default: gpt-4)
+      'autogen': `- \`AUTOGEN_MODEL\`: Model to use (default: gemini-pro)
 - \`AUTOGEN_TEMPERATURE\`: Model temperature (0.0-1.0)`,
       'google-adk': `- \`GOOGLE_APPLICATION_CREDENTIALS\`: Path to service account JSON
 - \`GOOGLE_PROJECT_ID\`: Google Cloud project ID`,
@@ -389,6 +402,7 @@ Enable debug logging by setting \`LOG_LEVEL=DEBUG\` in environment variables.
     return {
       name: config.projectName,
       framework: config.framework,
+      aiModel: 'Google Gemini',
       version: '1.0.0',
       generated: new Date().toISOString(),
       platform: 'Multiagent Development Platform',
@@ -398,11 +412,18 @@ Enable debug logging by setting \`LOG_LEVEL=DEBUG\` in environment variables.
         serverlessFunctions: config.includeServerless || false,
         sanitizedCode: true,
         securityValidated: true,
+        geminiIntegration: true,
       },
       deployment: {
         frontend: 'Netlify',
         backend: 'Railway.app',
         containerized: true,
+      },
+      aiCapabilities: {
+        model: 'Gemini Pro',
+        embeddings: 'Gemini Embedding-001',
+        freeApiTier: true,
+        rateLimits: '60 requests/minute, 1,500 requests/day',
       },
     };
   }

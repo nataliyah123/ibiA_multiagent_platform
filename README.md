@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/your-site-id/deploy-status)](https://app.netlify.com/sites/your-site/deploys)
 
-> A production-ready platform for automating multiagent system development with intelligent code generation, RAG-powered insights, and seamless deployment capabilities.
+> A production-ready platform for automating multiagent system development with intelligent code generation, RAG-powered insights, and seamless deployment capabilities. Powered by Google Gemini AI.
 
 ## Table of Contents
 
@@ -26,6 +26,7 @@ The Multiagent System Development Platform is a comprehensive solution for creat
 ### Key Features
 
 - **Multi-Framework Support**: CrewAI, Google ADK, and AutoGen with intelligent comparison matrix
+- **Google Gemini AI Integration**: Free-tier AI model for natural language processing and code generation
 - **RAG-Powered Intelligence**: GitHub repository scraping with vector storage for up-to-date code insights
 - **Dual Input Modes**: Voice-powered specifications and structured form inputs
 - **Visual Workflow Builder**: Drag-and-drop interface with Mermaid diagram export
@@ -46,6 +47,12 @@ The Multiagent System Development Platform is a comprehensive solution for creat
 │   Netlify       │    │   GitHub API    │    │   Package       │
 │   (Hosting)     │    │   (Scraping)    │    │   (Download)    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Supabase      │    │   ChromaDB      │    │   Gemini AI     │
+│   (Database)    │    │   (Vectors)     │    │   (Free API)    │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
 ## Getting Started
@@ -63,8 +70,8 @@ Before you begin, ensure you have the following installed:
 
 - **GitHub Account** (for repository access and deployment)
 - **Netlify Account** (for frontend deployment)
-- **OpenAI Account** (for AI-powered features)
-- **ElevenLabs Account** (optional, for enhanced voice features)
+- **Google Account** (for free Gemini API access)
+- **Supabase Account** (for database storage)
 
 ### Installation Instructions
 
@@ -89,23 +96,30 @@ Before you begin, ensure you have the following installed:
 4. **Configure environment variables**
    ```bash
    # Edit .env file with your API keys
-   VITE_OPENAI_API_KEY=your_openai_api_key_here
+   VITE_GEMINI_API_KEY=your_gemini_api_key_here
    VITE_GITHUB_TOKEN=your_github_token_here
-   VITE_ELEVENLABS_API_KEY=your_elevenlabs_api_key_here
+   VITE_SUPABASE_URL=your_supabase_url_here
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key_here
    ```
 
 ## Development Environment Setup
 
 ### Step-by-Step Local Development
 
-1. **Start the development server**
+1. **Get your Gemini API key**
+   - Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+   - Sign in with your Google account
+   - Create a new API key
+   - Copy the key to your `.env` file
+
+2. **Start the development server**
    ```bash
    npm run dev
    # or
    yarn dev
    ```
 
-2. **Access the application**
+3. **Access the application**
    - Open your browser to `http://localhost:5173`
    - The application will automatically reload on file changes
 
@@ -116,14 +130,15 @@ Before you begin, ensure you have the following installed:
 Create a `.env` file in the root directory with the following variables:
 
 ```bash
-# Required - OpenAI API for AI features
-VITE_OPENAI_API_KEY=sk-your-openai-api-key
+# Required - Google Gemini API for AI features (FREE)
+VITE_GEMINI_API_KEY=your-gemini-api-key
 
 # Required - GitHub token for repository scraping
 VITE_GITHUB_TOKEN=ghp_your-github-token
 
-# Optional - ElevenLabs for enhanced voice features
-VITE_ELEVENLABS_API_KEY=your-elevenlabs-api-key
+# Required - Supabase for database storage
+VITE_SUPABASE_URL=your-supabase-project-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 
 # Optional - Analytics and monitoring
 VITE_ANALYTICS_ID=your-analytics-id
@@ -133,6 +148,20 @@ VITE_DEBUG_MODE=true
 VITE_LOG_LEVEL=debug
 ```
 
+#### Google Gemini API Setup
+
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Sign in with your Google account
+3. Click "Create API Key"
+4. Copy the generated API key
+5. Add it to your `.env` file as `VITE_GEMINI_API_KEY`
+
+**Gemini API Benefits:**
+- **Free Tier**: 60 requests per minute, 1,500 requests per day
+- **No Credit Card Required**: Completely free to get started
+- **Advanced AI**: Latest Google AI technology
+- **Multiple Models**: Text generation, embeddings, and more
+
 #### GitHub Token Setup
 
 1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
@@ -141,6 +170,12 @@ VITE_LOG_LEVEL=debug
    - `public_repo` (for accessing public repositories)
    - `read:org` (for organization repositories)
 4. Copy the token to your `.env` file
+
+#### Supabase Setup
+
+1. Go to [Supabase](https://supabase.com) and create a new project
+2. Get your project URL and anon key from the project settings
+3. Add them to your `.env` file
 
 ### Common Development Commands
 
@@ -203,9 +238,10 @@ npm run update-deps
 2. **Configure Environment Variables in Netlify**
    ```bash
    # In Netlify Dashboard > Site settings > Environment variables
-   VITE_OPENAI_API_KEY=your_production_openai_key
+   VITE_GEMINI_API_KEY=your_production_gemini_key
    VITE_GITHUB_TOKEN=your_production_github_token
-   VITE_ELEVENLABS_API_KEY=your_production_elevenlabs_key
+   VITE_SUPABASE_URL=your_production_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_production_supabase_key
    ```
 
 #### Manual Deployment
@@ -231,7 +267,7 @@ netlify deploy --prod --dir=dist
 2. **Configure Environment Variables**
    ```bash
    # In Railway dashboard
-   OPENAI_API_KEY=your_openai_api_key
+   GEMINI_API_KEY=your_gemini_api_key
    GITHUB_TOKEN=your_github_token
    NODE_ENV=production
    PORT=8000
@@ -281,8 +317,8 @@ npm run build
 
 #### Backend Scaling
 - **Horizontal Scaling**: Deploy multiple Railway instances
-- **Database**: Consider PostgreSQL for persistent data
-- **Caching**: Implement Redis for session management
+- **Database**: PostgreSQL for persistent data
+- **Caching**: Redis for session management
 
 ### Monitoring Setup
 
@@ -306,6 +342,63 @@ Sentry.init({
 npm install gtag
 
 # Configure in src/services/analytics.ts
+```
+
+## Google Gemini AI Integration
+
+### Why Gemini?
+
+- **Free Tier**: Generous free limits for development and testing
+- **No Credit Card**: Get started immediately without payment info
+- **Latest Technology**: Google's most advanced AI model
+- **Multiple Capabilities**: Text generation, embeddings, reasoning
+
+### API Limits and Usage
+
+#### Free Tier Limits:
+- **Rate Limit**: 60 requests per minute
+- **Daily Limit**: 1,500 requests per day
+- **Token Limit**: Up to 30,000 tokens per minute
+- **Model Access**: Gemini Pro, Gemini Pro Vision, Embedding models
+
+#### Usage Optimization:
+- Implement request caching
+- Use batch processing where possible
+- Monitor usage in Google AI Studio
+- Implement exponential backoff for rate limits
+
+### Supported Models
+
+1. **Gemini Pro**: Advanced text generation and reasoning
+2. **Gemini Pro Vision**: Image and text understanding
+3. **Embedding-001**: Text embeddings for semantic search
+
+### Code Examples
+
+#### Basic Text Generation:
+```typescript
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+
+const result = await model.generateContent('Your prompt here');
+console.log(result.response.text());
+```
+
+#### Embeddings:
+```typescript
+const response = await fetch(
+  `https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent?key=${apiKey}`,
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'models/embedding-001',
+      content: { parts: [{ text: 'Your text here' }] }
+    })
+  }
+);
 ```
 
 ## UX Pilot Integration
@@ -414,10 +507,10 @@ We're committed to expanding platform support based on community needs and indus
   - Azure integration
   - Enterprise features
 
-- **OpenAI Assistants API**
-  - Native OpenAI assistant creation
-  - Function calling support
-  - File handling capabilities
+- **Gemini Pro Vision**
+  - Image processing agents
+  - Multimodal workflows
+  - Visual content analysis
 
 #### Q4 2024
 - **Custom Framework Support**
@@ -429,9 +522,9 @@ We're committed to expanding platform support based on community needs and indus
 
 | Quarter | Features | Status |
 |---------|----------|--------|
-| Q1 2024 | Core platform, CrewAI, AutoGen, Google ADK | ✅ Complete |
+| Q1 2024 | Core platform, CrewAI, AutoGen, Google ADK, Gemini AI | ✅ Complete |
 | Q2 2024 | LangChain, Haystack, UX Pilot integration | 🔄 In Progress |
-| Q3 2024 | Semantic Kernel, OpenAI Assistants | 📋 Planned |
+| Q3 2024 | Semantic Kernel, Gemini Pro Vision | 📋 Planned |
 | Q4 2024 | Custom frameworks, marketplace | 📋 Planned |
 
 ### Contribution Guidelines for New Platforms
@@ -548,18 +641,18 @@ export default defineConfig({
 
 #### API Issues
 
+**Problem**: Gemini API rate limit exceeded
+```bash
+# Solution: Implement rate limiting and caching
+# Check usage in Google AI Studio
+# Implement exponential backoff
+```
+
 **Problem**: GitHub API rate limit exceeded
 ```bash
 # Solution: Use authenticated requests
 # Add VITE_GITHUB_TOKEN to .env
 # Implement request caching
-```
-
-**Problem**: OpenAI API errors
-```bash
-# Solution: Verify API key and quota
-# Check OpenAI dashboard for usage
-# Implement error handling and retries
 ```
 
 #### Deployment Issues
@@ -736,13 +829,17 @@ This project uses several open-source libraries. See [THIRD_PARTY_LICENSES.md](T
 ## Acknowledgments
 
 - **Bolt.new** - For providing the development platform
+- **Google Gemini** - For free AI API access and advanced capabilities
 - **CrewAI Team** - For the innovative multiagent framework
 - **Microsoft AutoGen** - For conversational AI capabilities
 - **Google** - For the Agent Development Kit
+- **Supabase** - For the database infrastructure
 - **Community Contributors** - For ongoing improvements and feedback
 
 ---
 
 **Built with ❤️ by the Multiagent Platform Team**
+
+*Powered by Google Gemini AI - Free, Fast, and Intelligent*
 
 For more information, visit our [website](https://multiagent-platform.com) or follow us on [Twitter](https://twitter.com/multiagent_platform).
