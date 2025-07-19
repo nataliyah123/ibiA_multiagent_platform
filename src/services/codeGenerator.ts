@@ -603,7 +603,7 @@ ${this.objectToYaml(yamlConfig)}
     
     const frameworkDeps = {
       'crewai': ['crewai>=0.1.0', 'langchain>=0.1.0'],
-      'autogen': ['pyautogen>=0.2.0'],
+      'autogen': ['ag2>=0.2.0'],
       'google-adk': ['google-adk>=1.0.0', 'google-cloud>=0.34.0'],
     };
     
@@ -835,7 +835,7 @@ For platform-specific issues, contact the Multiagent Development Platform suppor
   private getFrameworkDependencies(framework: string): string[] {
     const deps = {
       'crewai': ['crewai', 'langchain', 'google-generativeai'],
-      'autogen': ['pyautogen', 'google-generativeai'],
+      'autogen': ['ag2', 'google-generativeai'],
       'google-adk': ['google-adk', 'google-cloud', 'google-generativeai'],
     };
     
